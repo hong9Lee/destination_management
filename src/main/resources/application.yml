@@ -1,0 +1,102 @@
+spring:
+  profiles:
+    active: prod
+    group:
+      dev:
+        - h2
+        - common
+
+      prod:
+        - MySQL
+        - common
+---
+server:
+  port: 8070
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+server:
+  port: 8060
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+---
+spring:
+  sql:
+    init:
+      mode: always
+
+  config:
+    activate:
+      on-profile: common
+
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: h2
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/travel
+    username: sa
+    password:
+    initialization-mode: always
+
+  h2:
+    console:
+      enabled: true
+
+---
+
+
+spring:
+  config:
+    activate:
+      on-profile: MySQL
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/travel
+    username: root
+    password: 102030
+
+---
+
+
+
+
+
+
+
+
+
+
+#logging:
+#  level:
+#    root: info
+
+#logging:
+#  level:
+#    root: error
+#    org:
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql: trace
