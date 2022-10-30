@@ -1,121 +1,102 @@
 package travel.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import travel.domain.City;
 import travel.domain.Travel;
-import travel.domain.User;
 import travel.domain.dto.TravelDto;
+import travel.domain.dto.req.AddTravelDto;
+import travel.domain.dto.req.DelTravelDto;
+import travel.domain.dto.req.ModTravelDto;
 import travel.domain.dto.res.TravelResDto;
-import travel.repository.CityRepository;
+import travel.domain.dto.res.TravelSingleResultDto;
 import travel.repository.TravelRepository;
-import travel.repository.UserRepository;
 import travel.util.Validation;
 import travel.util.helper.enums.StatusCode;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TravelService {
 
     private final TravelRepository travelRepository;
-    private final CityRepository cityRepository;
-    private final UserRepository userRepository;
-
     private final Validation validation;
 
-    public TravelResDto travelHandler(TravelDto travelDTO) {
-        String type = travelDTO.getType();
+    /** 여행 등록 메서드 */
+    public TravelResDto add(AddTravelDto dto) {
+        try {
 
-        Long travelId = 0L;
+            Travel travel = new Travel();
+            travel.setTitle(dto.getTitle());
+            travel.setStartDate(dto.getStartDate());
+            travel.setEndDate(dto.getEndDate());
+            travel.setUser(validation.isExistUser(dto.getUserId()));
+            travel.setCity(validation.isExistCity(dto.getCityId()));
 
-        if (type.equals("DEL")) {
-            del(travelDTO);
-            travelId = travelDTO.getTravelId();
-        } else {
-            validation.isExistCity(travelDTO.getCityId()); // 도시 체크
-            validation.isValidEndDate(travelDTO.getEndDate()); // endDate 체크
+            Travel savedTravel = travelRepository.save(travel);
 
-            if (type.equals("ADD")) {
-                travelId = add(travelDTO);
-            } else if (type.equals("MOD")) {
-                travelId = mod(travelDTO);
-            }
+            return new TravelResDto(savedTravel.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return new TravelResDto(null, StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
         }
-
-        return setResponse(travelId, StatusCode.SUCCESS);
     }
 
+    /** 여행 수정 메서드 */
+    public TravelResDto mod(ModTravelDto dto) {
+        try {
 
+            Travel getTravel = validation.isExistTravel(dto.getTravelId());
+            getTravel.setStartDate(dto.getStartDate());
+            getTravel.setEndDate(dto.getEndDate());
+            getTravel.setTitle(dto.getTitle());
+            getTravel.setCity(validation.isExistCity(dto.getCityId()));
 
-    public Long add(TravelDto travelDTO) {
-        validation.isExistUser(travelDTO.getUserId()); // 유저 체크
+            Travel savedTravel = travelRepository.save(getTravel);
 
-        Travel travel = new Travel();
-        travel.setTitle(travelDTO.getTitle());
-        travel.setStartDate(travelDTO.getStartDate());
-        travel.setEndDate(travelDTO.getEndDate());
-        travel.setUser(getUser(travelDTO.getUserId()));
-        travel.setCity(getCity(travelDTO.getCityId()));
-        Travel savedTravel = travelRepository.save(travel);
-        return savedTravel.getId();
-
-//        return setResponse(savedTravel.getId(), StatusCode.SUCCESS);
+            return new TravelResDto(savedTravel.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new TravelResDto(dto.getTravelId(), StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
+        }
     }
 
-    public Long mod(TravelDto travelDTO) {
-        validation.isExistTravel(travelDTO.getTravelId()); // 여행 체크
+    /** 여행 삭제 메서드 */
+    public TravelResDto del(DelTravelDto dto) {
+        try {
 
-        Travel getTravel = travelRepository.getById(travelDTO.getTravelId());
-        getTravel.setStartDate(travelDTO.getStartDate());
-        getTravel.setEndDate(travelDTO.getEndDate());
-        getTravel.setTitle(travelDTO.getTitle());
-        getTravel.setCity(getCity(travelDTO.getCityId()));
-        Travel savedTravel = travelRepository.save(getTravel);
-        return savedTravel.getId();
+            validation.isExistTravel(dto.getTravelId()); // 여행 존재유무 체크
+            travelRepository.deleteById(dto.getTravelId());
 
-//        return setResponse(savedTravel.getId(), StatusCode.SUCCESS);
+            return new TravelResDto(dto.getTravelId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new TravelResDto(dto.getTravelId(), StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
+        }
     }
 
-    public void del(TravelDto travelDTO) {
-        validation.isExistTravel(travelDTO.getTravelId());
-        travelRepository.deleteById(travelDTO.getTravelId());
+    /** 여행 단건 조회 */
+    public TravelSingleResultDto getTravelSingleResult(Long id) {
+        try {
 
-//        return setResponse(travelDTO.getTravelId(), StatusCode.SUCCESS);
+            Travel getTravel = validation.isExistTravel(id); // 여행 체크
+
+            TravelDto result = TravelDto.builder()
+                    .title(getTravel.getTitle())
+                    .travelId(getTravel.getId())
+                    .userId(getTravel.getUser().getId())
+                    .cityId(getTravel.getCity().getId())
+                    .startDate(getTravel.getStartDate())
+                    .endDate(getTravel.getEndDate())
+                    .build();
+            return new TravelSingleResultDto(StatusCode.OK.getCode(), StatusCode.OK.getMsg(), result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new TravelSingleResultDto(StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage(), null);
+        }
     }
 
-    public City getCity(Long cityId) {
-        return cityRepository.getById(cityId);
-    }
-
-    public User getUser(Long userId) {
-        return userRepository.getById(userId);
-    }
-
-
-
-
-    public TravelDto getTravel(Long id) {
-        validation.isExistTravel(id); // 여행 체크
-        Travel getTravel = travelRepository.getById(id);
-
-        return TravelDto.builder()
-                .title(getTravel.getTitle())
-                .travelId(getTravel.getId())
-                .userId(getTravel.getUser().getId())
-                .cityId(getTravel.getCity().getId())
-                .startDate(getTravel.getStartDate())
-                .endDate(getTravel.getEndDate())
-                .build();
-    }
-
-
-    public TravelResDto setResponse(Long id, StatusCode code) {
-        TravelResDto travelResDto = new TravelResDto();
-        travelResDto.setTravelId(id);
-        travelResDto.setCode(code.getCode());
-        return travelResDto;
-    }
 
 }

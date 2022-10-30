@@ -6,4 +6,7 @@ import travel.domain.Travel;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
 
+    Travel findByTitleAndUserId(String title, Long userId);
+
+    boolean existsById(Long travelId);
 }

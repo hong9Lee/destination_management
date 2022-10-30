@@ -13,6 +13,7 @@ public class Travel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "travel_id")
     private long id;
 
     private String title;

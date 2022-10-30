@@ -4,10 +4,12 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public enum StatusCode {
-    SUCCESS("200", "성공"),
-    FAIL("500", "오류");
+    OK(200, "SUCCESS"),
+    BAD_REQUEST(400, "BAD_REQUEST"),
+    INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR");
 
-    private String code;
+
+    private Integer code;
     private String msg;
 
     StatusCode(StatusCode status) {
@@ -15,12 +17,12 @@ public enum StatusCode {
         this.msg = status.getMsg();
     }
 
-    StatusCode(String code, String msg) {
+    StatusCode(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
