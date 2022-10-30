@@ -1,16 +1,18 @@
-package travel.domain.dto.req;
+package travel.domain.dto.req.travel;
 
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
 @Builder
-public class AddTravelDto {
+public class ModTravelDto {
+
+    @NotNull(message = "travel id는 필수값입니다.")
+    private Long travelId;
 
     private String title;
 
@@ -18,7 +20,6 @@ public class AddTravelDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @Future
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

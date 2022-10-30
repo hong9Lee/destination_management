@@ -8,9 +8,12 @@ import lombok.Data;
 public class CityDto {
 
     private long cityId;
-    private String type;
+
+    private String addr_1; // 도
+    private String addr_2; // 시
     private String cityName;
+
+    private String fullAddr;
     private String explanation;
-    private String cityToken;
 
 }

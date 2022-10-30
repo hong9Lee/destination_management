@@ -1,4 +1,4 @@
-package travel.domain.dto.req;
+package travel.domain.dto.req.travel;
 
 import lombok.Builder;
 import lombok.Data;

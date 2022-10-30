@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TravelResDto {
+public class CityResDto {
 
-    private Long travelId;
+    private Long cityId;
     private Integer code;
     private String msg;
 

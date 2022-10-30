@@ -14,17 +14,12 @@ public class TravelDto {
 
     private String title;
 
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @NotNull(message = "city id는 필수값입니다.")
     private Long cityId;
 
-    @NotNull(message = "user id는 필수값입니다.")
     private Long userId;
 
 

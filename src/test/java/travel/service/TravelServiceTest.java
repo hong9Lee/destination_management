@@ -6,11 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
 import org.springframework.transaction.annotation.Transactional;
 import travel.domain.Travel;
-import travel.domain.dto.req.AddTravelDto;
-import travel.domain.dto.req.DelTravelDto;
-import travel.domain.dto.req.ModTravelDto;
+import travel.domain.dto.TravelDto;
+import travel.domain.dto.req.travel.AddTravelDto;
+import travel.domain.dto.req.travel.DelTravelDto;
+import travel.domain.dto.req.travel.ModTravelDto;
 import travel.domain.dto.res.TravelResDto;
-import travel.domain.dto.res.TravelSingleResultDto;
+import travel.domain.dto.res.SingleResultDto;
 import travel.repository.TravelRepository;
 
 import java.time.LocalDate;
@@ -112,9 +113,9 @@ class TravelServiceTest {
         travelService.add(addTravel);
         Travel savedTravel = travelRepository.findByTitleAndUserId(addTravel.getTitle(), addTravel.getUserId());
 
-        TravelSingleResultDto result = travelService.getTravelSingleResult(savedTravel.getId());
-
-        assertEquals(result.getResult().getTitle(), "서해바다");
+        SingleResultDto result = travelService.getTravelSingleResult(savedTravel.getId());
+        TravelDto ret = (TravelDto) result.getResult();
+        assertEquals(ret.getTitle(), "서해바다");
     }
 
 }

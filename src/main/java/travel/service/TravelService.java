@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import travel.domain.City;
 import travel.domain.Travel;
 import travel.domain.dto.TravelDto;
-import travel.domain.dto.req.AddTravelDto;
-import travel.domain.dto.req.DelTravelDto;
-import travel.domain.dto.req.ModTravelDto;
+import travel.domain.dto.req.travel.AddTravelDto;
+import travel.domain.dto.req.travel.DelTravelDto;
+import travel.domain.dto.req.travel.ModTravelDto;
 import travel.domain.dto.res.TravelResDto;
-import travel.domain.dto.res.TravelSingleResultDto;
+import travel.domain.dto.res.SingleResultDto;
+import travel.repository.CityRepository;
 import travel.repository.TravelRepository;
 import travel.util.Validation;
 import travel.util.helper.enums.StatusCode;
@@ -22,6 +24,7 @@ import travel.util.helper.enums.StatusCode;
 public class TravelService {
 
     private final TravelRepository travelRepository;
+    private final CityRepository cityRepository;
     private final Validation validation;
 
     /** 여행 등록 메서드 */
@@ -33,9 +36,14 @@ public class TravelService {
             travel.setStartDate(dto.getStartDate());
             travel.setEndDate(dto.getEndDate());
             travel.setUser(validation.isExistUser(dto.getUserId()));
-            travel.setCity(validation.isExistCity(dto.getCityId()));
+
+            City getCity = validation.isExistCity(dto.getCityId());
+            travel.setCity(getCity);
 
             Travel savedTravel = travelRepository.save(travel);
+
+            getCity.addTravel(savedTravel);
+
 
             return new TravelResDto(savedTravel.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
         } catch (Exception e){
@@ -78,7 +86,7 @@ public class TravelService {
     }
 
     /** 여행 단건 조회 */
-    public TravelSingleResultDto getTravelSingleResult(Long id) {
+    public SingleResultDto getTravelSingleResult(Long id) {
         try {
 
             Travel getTravel = validation.isExistTravel(id); // 여행 체크
@@ -91,10 +99,10 @@ public class TravelService {
                     .startDate(getTravel.getStartDate())
                     .endDate(getTravel.getEndDate())
                     .build();
-            return new TravelSingleResultDto(StatusCode.OK.getCode(), StatusCode.OK.getMsg(), result);
+            return new SingleResultDto(StatusCode.OK.getCode(), StatusCode.OK.getMsg(), result);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new TravelSingleResultDto(StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage(), null);
+            return new SingleResultDto(StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage(), null);
         }
     }
 

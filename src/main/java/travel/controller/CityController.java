@@ -4,23 +4,45 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import travel.domain.dto.CityDto;
+import travel.domain.dto.req.city.AddCityDto;
+import travel.domain.dto.req.city.DelCityDto;
+import travel.domain.dto.req.city.ModCityDto;
+import travel.domain.dto.res.CityResDto;
 import travel.service.CityService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("city")
 public class CityController {
 
     private final CityService cityService;
 
-    @PostMapping("/city")
-    public ResponseEntity city(@RequestBody CityDto cityDTO) {
-        cityService.cityHandler(cityDTO);
-        return null;
+    /** 도시 등록  */
+    @PostMapping("/add")
+    public ResponseEntity addCity(@RequestBody AddCityDto dto) {
+        CityResDto result = cityService.add(dto);
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getCode()));
     }
 
-    @GetMapping ("/city")
-    public ResponseEntity city(@RequestParam(name = "id") long id) {
-        return new ResponseEntity<>(cityService.findCity(id), HttpStatus.OK);
+    /** 도시 수정  */
+    @PostMapping("/mod")
+    public ResponseEntity modCity(@RequestBody ModCityDto dto) {
+        CityResDto result = cityService.mod(dto);
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getCode()));
     }
+
+    /** 도시 삭제 */
+    @PostMapping("/del")
+    public ResponseEntity delCity(@RequestBody DelCityDto dto) {
+        CityResDto result = cityService.del(dto);
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getCode()));
+    }
+
+    /** 도시 단건 조회 */
+    @GetMapping ("/single")
+    public ResponseEntity getSingleCity(@RequestParam(name = "id") long id) {
+        return new ResponseEntity<>(cityService.getCitySingleResult(id), HttpStatus.OK);
+    }
+
+
 }

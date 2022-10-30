@@ -10,6 +10,7 @@ import travel.domain.User;
 import travel.repository.CityRepository;
 import travel.repository.TravelRepository;
 import travel.repository.UserRepository;
+import travel.util.helper.exception.ExistCityException;
 
 @RequiredArgsConstructor
 @Component
@@ -47,6 +48,15 @@ public class Validation {
         } catch (Exception e) {
             log.error("여행이 존재하지 않습니다 !!");
             throw new EmptyResultDataAccessException("여행이 존재하지 않습니다. travel id를 확인해주세요.", 1);
+        }
+    }
+
+    public void isExistCityName(String fullAddr) {
+        try {
+            if (cityRepository.existsByFullAddr(fullAddr)) throw new Exception();
+        } catch (Exception e) {
+            log.error("이미 등록되어 있는 도시 입니다. 주소를 확인해 주세요.");
+            throw new ExistCityException("이미 등록되어 있는 도시 입니다. 주소를 확인해 주세요.");
         }
 
     }

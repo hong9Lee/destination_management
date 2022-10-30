@@ -19,7 +19,6 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception e) {
         log.error(e.getMessage());
-
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setStatusCode(StatusCode.INTERNAL_SERVER_ERROR.getCode());
         errorResponse.setMessage(e.getMessage());
@@ -32,10 +31,10 @@ public class GlobalControllerAdvice {
      * @valid Request 유효성 체크에 통과하지 못하면 MethodArgumentNotValidException 발생.
      */
     @ExceptionHandler({MethodArgumentNotValidException.class,
-            MissingRequestHeaderException.class})
+            MissingRequestHeaderException.class,
+            ExistCityException.class})
     public ResponseEntity BadRequestException(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
-
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setStatusCode(StatusCode.BAD_REQUEST.getCode());
         errorResponse.setMessage(e.getMessage());
@@ -48,7 +47,6 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler({
             EmptyResultDataAccessException.class,
-            EndDateException.class,
             DateTimeParseException.class
     })
     public ResponseEntity InternalServerException(Exception e) {
