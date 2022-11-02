@@ -8,6 +8,7 @@ import travel.domain.dto.req.city.AddCityDto;
 import travel.domain.dto.req.city.DelCityDto;
 import travel.domain.dto.req.city.ModCityDto;
 import travel.domain.dto.res.CityResDto;
+import travel.domain.dto.res.SingleResultDto;
 import travel.service.CityService;
 
 @RestController
@@ -40,9 +41,29 @@ public class CityController {
 
     /** 도시 단건 조회 */
     @GetMapping ("/single")
-    public ResponseEntity getSingleCity(@RequestParam(name = "id") long id) {
-        return new ResponseEntity<>(cityService.getCitySingleResult(id), HttpStatus.OK);
+    public ResponseEntity getSingleCity(@RequestParam(name = "city_id") long cityId,
+                                        @RequestParam(name = "user_id") long userId) {
+        System.out.println(cityId + userId);
+
+        SingleResultDto result = cityService.getCitySingleResult(cityId, userId);
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getCode()));
     }
+
+
+    /** TODO: 1. 인수 테스트 작성
+              2. 유저별 도시 목록 조회
+              3. README 작성
+              4. domain 별로 작동 확인 필요
+     */
+    @GetMapping ("/city-list")
+    public ResponseEntity getCityList(@RequestParam(name = "id") long userId) {
+        cityService.getCityList(userId);
+
+
+        return null;
+    }
+
+
 
 
 }

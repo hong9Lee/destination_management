@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import travel.util.helper.listener.BaseTimeEntity;
+import travel.util.helper.listener.SearchListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class City {
+@EntityListeners(value = {SearchListener.class})
+public class City extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

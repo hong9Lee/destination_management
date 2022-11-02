@@ -1,6 +1,7 @@
 package travel.domain;
 
 import lombok.*;
+import travel.util.helper.listener.BaseTimeEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Travel {
+public class Travel extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
