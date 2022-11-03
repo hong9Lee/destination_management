@@ -18,7 +18,7 @@ public class AddTravelDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @Future
+    @Future(message = "여행 종료일은 미래여야 합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

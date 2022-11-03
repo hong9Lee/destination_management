@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import travel.domain.City;
 import travel.domain.Travel;
+import travel.domain.User;
 import travel.domain.dto.TravelDto;
 import travel.domain.dto.req.travel.AddTravelDto;
 import travel.domain.dto.req.travel.DelTravelDto;
@@ -14,7 +15,7 @@ import travel.domain.dto.res.TravelResDto;
 import travel.domain.dto.res.SingleResultDto;
 import travel.repository.CityRepository;
 import travel.repository.TravelRepository;
-import travel.util.Validation;
+import travel.util.helper.valid.Validation;
 import travel.util.helper.enums.StatusCode;
 
 @Service
@@ -24,7 +25,6 @@ import travel.util.helper.enums.StatusCode;
 public class TravelService {
 
     private final TravelRepository travelRepository;
-    private final CityRepository cityRepository;
     private final Validation validation;
 
     /** 여행 등록 메서드 */
@@ -35,15 +35,16 @@ public class TravelService {
             travel.setTitle(dto.getTitle());
             travel.setStartDate(dto.getStartDate());
             travel.setEndDate(dto.getEndDate());
-            travel.setUser(validation.isExistUser(dto.getUserId()));
+
+            User getUser = validation.isExistUser(dto.getUserId());
+            travel.setUser(getUser);
 
             City getCity = validation.isExistCity(dto.getCityId());
             travel.setCity(getCity);
 
             Travel savedTravel = travelRepository.save(travel);
-
             getCity.addTravel(savedTravel);
-
+            getUser.addTravel(travel);
 
             return new TravelResDto(savedTravel.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
         } catch (Exception e){

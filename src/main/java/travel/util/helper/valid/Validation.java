@@ -1,4 +1,4 @@
-package travel.util;
+package travel.util.helper.valid;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

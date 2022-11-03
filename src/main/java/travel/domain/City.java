@@ -1,9 +1,7 @@
 package travel.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 import travel.util.helper.listener.BaseTimeEntity;
 import travel.util.helper.listener.SearchListener;
 
@@ -18,12 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EntityListeners(value = {SearchListener.class})
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class City extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
 
     private String addr_1; // 도
     private String addr_2; // 시
@@ -37,7 +36,10 @@ public class City extends BaseTimeEntity {
             , fetch = FetchType.LAZY
             , cascade = {CascadeType.ALL}
             , orphanRemoval = true)
+    @JsonManagedReference
+    @Builder.Default
     private List<Travel> travelList = new ArrayList<>();
+
 
     public void addTravel(Travel... travels) {
         Collections.addAll(this.travelList, travels);

@@ -1,5 +1,6 @@
 package travel.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,10 +19,19 @@ public class SearchHistory {
     @Column(name = "search_history_id")
     private Long id;
 
-    private Long userId;
-    private Long cityId;
+//    private Long userId;
+//    private Long cityId;
 
     private LocalDateTime searchDate;
 
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "city_id")
+    private City city;
 
 }

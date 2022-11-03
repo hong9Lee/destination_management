@@ -1,5 +1,6 @@
 package travel.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import travel.util.helper.listener.BaseTimeEntity;
 
@@ -10,6 +11,8 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class Travel extends BaseTimeEntity {
 
     @Id
@@ -23,9 +26,11 @@ public class Travel extends BaseTimeEntity {
     private LocalDate endDate;
 
     @ManyToOne
+    @JsonBackReference
     private City city;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 
