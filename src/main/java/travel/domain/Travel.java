@@ -20,10 +20,10 @@ public class Travel extends BaseTimeEntity {
     @Column(name = "travel_id")
     private long id;
 
-    private String title;
+    private String title; // 여행 제목
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate startDate; // 여행 시작일
+    private LocalDate endDate; // 여행 종료일
 
     @ManyToOne
     @JsonBackReference

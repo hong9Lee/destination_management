@@ -19,10 +19,7 @@ public class SearchHistory {
     @Column(name = "search_history_id")
     private Long id;
 
-//    private Long userId;
-//    private Long cityId;
-
-    private LocalDateTime searchDate;
+    private LocalDateTime searchDate; // 검색한 날짜
 
     @ManyToOne
     @JsonBackReference

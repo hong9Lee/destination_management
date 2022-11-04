@@ -15,6 +15,7 @@ import travel.domain.dto.res.TravelResDto;
 import travel.domain.dto.res.SingleResultDto;
 import travel.repository.CityRepository;
 import travel.repository.TravelRepository;
+import travel.repository.UserRepository;
 import travel.util.helper.valid.Validation;
 import travel.util.helper.enums.StatusCode;
 
@@ -25,6 +26,8 @@ import travel.util.helper.enums.StatusCode;
 public class TravelService {
 
     private final TravelRepository travelRepository;
+    private final CityRepository cityRepository;
+    private final UserRepository userRepository;
     private final Validation validation;
 
     /** 여행 등록 메서드 */
@@ -37,14 +40,20 @@ public class TravelService {
             travel.setEndDate(dto.getEndDate());
 
             User getUser = validation.isExistUser(dto.getUserId());
-            travel.setUser(getUser);
-
             City getCity = validation.isExistCity(dto.getCityId());
+
+            travel.setUser(getUser);
             travel.setCity(getCity);
+
 
             Travel savedTravel = travelRepository.save(travel);
             getCity.addTravel(savedTravel);
+
+
+            cityRepository.save(getCity);
+
             getUser.addTravel(travel);
+            userRepository.save(getUser);
 
             return new TravelResDto(savedTravel.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
         } catch (Exception e){
@@ -74,11 +83,12 @@ public class TravelService {
 
     /** 여행 삭제 메서드 */
     public TravelResDto del(DelTravelDto dto) {
+        Travel travel = validation.isExistTravel(dto.getTravelId());// 여행 존재유무 체크
+
         try {
 
-            validation.isExistTravel(dto.getTravelId()); // 여행 존재유무 체크
-            travelRepository.deleteById(dto.getTravelId());
-
+            travel.getUser().getTravelList().remove(travel);
+            travelRepository.deleteById(travel.getId());
             return new TravelResDto(dto.getTravelId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage());

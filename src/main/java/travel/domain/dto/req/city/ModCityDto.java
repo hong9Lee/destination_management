@@ -9,16 +9,16 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ModCityDto {
 
-    @NotNull
+    @NotNull(message = "city id를 정확하게 입력해주세요.")
     private Long cityId;
 
     private String explanation;
 
-    @NotNull
+    @NotNull(message = "주소를 정확하게 입력해주세요.")
     private String addr_1; // 도
-    @NotNull
+    @NotNull(message = "주소를 정확하게 입력해주세요.")
     private String addr_2; // 시
-    @NotNull
+    @NotNull(message = "주소를 정확하게 입력해주세요.")
     private String cityName;
 
     private String fullAddr;

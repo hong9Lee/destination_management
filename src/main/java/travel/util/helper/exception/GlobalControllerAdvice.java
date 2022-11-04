@@ -43,8 +43,6 @@ public class GlobalControllerAdvice {
     }
 
 
-
-
     @ExceptionHandler({
             EmptyResultDataAccessException.class,
             DateTimeParseException.class
@@ -57,7 +55,6 @@ public class GlobalControllerAdvice {
         errorResponse.setMessage(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-
     }
 
 

@@ -33,8 +33,6 @@ public class SearchListener implements ApplicationListener<SearchEvent> {
     @Override
     public void onApplicationEvent(SearchEvent event) {
         SearchHistory searchHistory = new SearchHistory();
-//        searchHistory.setUserId(event.getUserId());
-//        searchHistory.setCityId(event.getCityId());
 
         searchHistory.setSearchDate(LocalDateTime.now());
 

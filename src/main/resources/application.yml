@@ -1,7 +1,11 @@
 spring:
   profiles:
-    active: prod
+    active: test
     group:
+      test:
+        - h2
+        - common
+
       dev:
         - h2
         - common
@@ -9,15 +13,31 @@ spring:
       prod:
         - MySQL
         - common
+
+
+
+---
+server:
+  port: 8080
+  servlet:
+    encoding:
+      force-response: true
+
+spring:
+  config:
+    activate:
+      on-profile: test
 ---
 server:
   port: 8070
+  servlet:
+    encoding:
+      force-response: true
 
 spring:
   config:
     activate:
       on-profile: dev
-
 ---
 server:
   port: 8060
@@ -29,6 +49,8 @@ spring:
   config:
     activate:
       on-profile: prod
+
+
 ---
 spring:
   sql:
@@ -49,6 +71,11 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
+
+
+
+
+
 
 ---
 

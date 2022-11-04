@@ -47,6 +47,7 @@ public class CityController {
         return new ResponseEntity<>(result, HttpStatus.valueOf(result.getCode()));
     }
 
+    /** 도시 리스트 조회 */
     @GetMapping ("/city-list")
     public ResponseEntity getCityList(@RequestParam(name = "id") long userId) {
         SingleResultDto result = cityService.getCityList(userId);

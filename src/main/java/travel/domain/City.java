@@ -26,11 +26,9 @@ public class City extends BaseTimeEntity {
 
     private String addr_1; // 도
     private String addr_2; // 시
-    private String cityName;
-
-    private String fullAddr;
-
-    private String explanation;
+    private String cityName; // 지역 이름
+    private String fullAddr; // addr_1, addr_2, cityName을 합친 전체 주소
+    private String explanation; // 도시 설명
 
     @OneToMany(mappedBy = "city"
             , fetch = FetchType.LAZY
@@ -40,8 +38,9 @@ public class City extends BaseTimeEntity {
     @Builder.Default
     private List<Travel> travelList = new ArrayList<>();
 
-
     public void addTravel(Travel... travels) {
         Collections.addAll(this.travelList, travels);
     }
+
+
 }

@@ -5,7 +5,6 @@ import travel.domain.City;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class Utils {
 
@@ -20,6 +19,12 @@ public class Utils {
 
     /** City List 중복 제거 */
     public static ArrayList<City> getDupList(ArrayList<City> list) {
-        return new ArrayList<>(new HashSet<>(list));
+        ArrayList<City> dupCityList = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            if(!dupCityList.contains(list.get(i))) dupCityList.add(list.get(i));
+        }
+
+        return dupCityList;
     }
 }

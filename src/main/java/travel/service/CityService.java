@@ -88,9 +88,9 @@ public class CityService {
 
         try {
             if (!getCity.getTravelList().isEmpty()) throw new Exception("해당 도시에 등록된 여행이 존재합니다.");
-            cityRepository.deleteById(dto.getCityId());
+            cityRepository.deleteById(getCity.getId());
 
-            return new CityResDto(dto.getCityId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
+            return new CityResDto(getCity.getId(), StatusCode.OK.getCode(), StatusCode.OK.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage());
             return new CityResDto(dto.getCityId(), StatusCode.INTERNAL_SERVER_ERROR.getCode(), e.getMessage());

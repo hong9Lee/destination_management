@@ -9,6 +9,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class DelCityDto {
 
-    @NotNull
+    @NotNull(message = "city id를 입력해주세요.")
     private Long cityId;
 }

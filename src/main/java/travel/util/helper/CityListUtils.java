@@ -14,25 +14,29 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CityListUtils {
-    /** 여행 시작일이 가까운 여행중인 도시 리스트 반환 (중복 허용) */
+    /**
+     * 여행 시작일이 가까운 여행중인 도시 리스트 반환 (중복 허용)
+     */
     public static ArrayList<City> getTravelingCityList(List<Travel> travelList) {
         ArrayList<Travel> travelingList = new ArrayList<>();
 
         for (int i = 0; i < travelList.size(); i++) {
             Travel travel = travelList.get(i);
 
-            if(travel.getStartDate().isBefore(LocalDate.now())
-                    && travel.getEndDate().isAfter(LocalDate.now())){
+            if (travel.getStartDate().isBefore(LocalDate.now())
+                    && travel.getEndDate().isAfter(LocalDate.now())) {
                 travelingList.add(travel);
-                travelList.remove(travel);
             }
         }
 
+        removeTravelListItem(travelList, travelingList);
         travelingList.sort(Comparator.comparing(Travel::getStartDate));
         return getCityByTravel(travelingList);
     }
 
-    /** 여행이 예정된 도시 : 정렬(여행 시작일이 가까운 것부터) 리스트 반환 */
+    /**
+     * 여행이 예정된 도시 : 정렬(여행 시작일이 가까운 것부터) 리스트 반환
+     */
     public static ArrayList<City> getFutureTravelCityList(List<Travel> travelList) {
         ArrayList<Travel> futureTravelList = new ArrayList<>();
         for (int i = 0; i < travelList.size(); i++) {
@@ -40,31 +44,35 @@ public class CityListUtils {
 
             if (travel.getStartDate().isAfter(LocalDate.now())) {
                 futureTravelList.add(travel);
-                travelList.remove(travel);
             }
         }
 
+        removeTravelListItem(travelList, futureTravelList);
         futureTravelList.sort(Comparator.comparing(Travel::getStartDate));
         return Utils.getDupList(getCityByTravel(futureTravelList));
     }
 
-    /** 하루 이내에 등록된 도시 : 정렬(가장 최근에 등록한 도시) 리스트 반환(중복 제거) */
+    /**
+     * 하루 이내에 등록된 도시 : 정렬(가장 최근에 등록한 도시) 리스트 반환(중복 제거)
+     */
     public static ArrayList<City> getRecentRegistrationCityList(List<Travel> travelList) {
         ArrayList<Travel> recentRegistrationCityList = new ArrayList<>();
 
         for (int i = 0; i < travelList.size(); i++) {
             Travel travel = travelList.get(i);
 
-            if(Utils.calcRecentDate(-1, travel.getCreatedAt()))
+            if (Utils.calcRecentDate(-1, travel.getCreatedAt()))
                 recentRegistrationCityList.add(travel);
-            travelList.remove(travel);
         }
 
+        removeTravelListItem(travelList, recentRegistrationCityList);
         recentRegistrationCityList.sort(Comparator.comparing(Travel::getCreatedAt));
         return Utils.getDupList(getCityByTravel(recentRegistrationCityList));
     }
 
-    /** 최근 일주일 이내에 한 번 이상 조회된 도시 : 정렬(가장 최근 조회) 리스트 반환(중복 제거) */
+    /**
+     * 최근 일주일 이내에 한 번 이상 조회된 도시 : 정렬(가장 최근 조회) 리스트 반환(중복 제거)
+     */
     public static ArrayList<City> getSearchList(User getUser, List<Travel> travelList) {
         List<SearchHistory> searchHistoryList = getUser.getSearchHistoryList();
 
@@ -74,22 +82,36 @@ public class CityListUtils {
         for (int i = 0; i < searchHistoryList.size(); i++) {
             SearchHistory history = searchHistoryList.get(i);
 
-            if(Utils.calcRecentDate(-7, history.getSearchDate())) {
+            if (Utils.calcRecentDate(-7, history.getSearchDate())) {
                 City city = history.getCity();
                 searchList.add(city);
 
-                for (int j = 0; j < travelList.size(); j++) {
-                    City getCity = travelList.get(j).getCity();
-                    if(getCity.getId() == city.getId()){
-                        travelList.remove(travelList.get(j));
-                    }
-                }
+                removeCityInTravelList(travelList, city);
             }
         }
+
         return Utils.getDupList(searchList);
     }
 
-    /** Travel List 에서 추출한 City 리스트 반환 */
+    private static void removeCityInTravelList(List<Travel> travelList, City city) {
+        for (int j = 0; j < travelList.size(); j++) {
+            City getCity = travelList.get(j).getCity();
+            if (getCity.getId() == city.getId()) {
+                travelList.remove(travelList.get(j));
+            }
+        }
+    }
+
+
+    private static void removeTravelListItem(List<Travel> travelList, ArrayList<Travel> list) {
+        list.forEach(item -> {
+            if(travelList.contains(item)) travelList.remove(item);
+        });
+    }
+
+    /**
+     * Travel List 에서 추출한 City 리스트 반환
+     */
     public static ArrayList<City> getCityByTravel(List<Travel> travelList) {
 
         ArrayList<City> cityList = new ArrayList<>();
@@ -136,7 +158,9 @@ public class CityListUtils {
         return resDto;
     }
 
-    /** City List 결과값 DTO로 반환 */
+    /**
+     * City List 결과값 DTO로 반환
+     */
     public static ArrayList<CityResultDto> setResultDto(ArrayList<City> travelingResult, ArrayList<City> dupList) {
         ArrayList<CityResultDto> resDto = new ArrayList<>();
         resDto = cityResultMapper(resDto, travelingResult, "Y");

@@ -115,14 +115,13 @@ class TravelServiceTest {
                 .userId(saveUser())
                 .build();
 
-        travelService.add(addTravel);
-        Travel savedTravel = travelRepository.findByTitleAndUserId(addTravel.getTitle(), addTravel.getUserId());
+        TravelResDto travel = travelService.add(addTravel);
 
         DelTravelDto dto = new DelTravelDto();
-        dto.setTravelId(savedTravel.getId());
+        dto.setTravelId(travel.getTravelId());
         travelService.del(dto);
 
-        assertFalse(travelRepository.existsById(savedTravel.getId()));
+        assertFalse(travelRepository.existsById(travel.getTravelId()));
     }
 
     @Test

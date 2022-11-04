@@ -16,15 +16,14 @@ import java.util.List;
 @ToString(callSuper = true)
 public class User extends BaseTimeEntity {
 
-    public User() {
-    }
+    public User() {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
 
-    private String userName;
+    private String userName; // 유저 이름
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY
             , cascade = {CascadeType.ALL}
